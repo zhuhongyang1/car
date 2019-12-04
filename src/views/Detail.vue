@@ -1,6 +1,7 @@
 <template>
   <div>
       <img :src="del.CoverPhoto" alt="">
+       {{123}}
   </div>
 </template>
 
