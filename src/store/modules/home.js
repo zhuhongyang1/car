@@ -1,33 +1,44 @@
-import {getMasterBrandList} from '@/services/index'
-
+import { getMasterBrandList } from '@/services/index'
+ 
 const state = {
-    list: [],
-    listArr: []
+    masterBrandObj: {},
+    masterKeys: [],
+    listElement: null
 }
 
 const mutations = {
-    updateList(state, payload){
-        state.list = payload;
+    updateList(state, payload) {
+        state.masterBrandObj = payload
     },
-    upList(state, payload){
-        state.listArr = payload;
+    masterKeys(state, payload) {
+        state.masterKeys = payload
     },
+    scrollToList(state, payload) {
+        // console.log(payload)
+        state.listElement = payload
+    }
 }
+
 const actions = {
-    async getMasterBrandList({commit}){
-        let res = await getMasterBrandList();
-        const obj = {}
-        res.data.forEach(item=>{
-            if(!obj[item.Spelling.slice(0,1)]){
-              obj[item.Spelling.slice(0,1)] = [item]
-            }else{
-              obj[item.Spelling.slice(0,1)].push(item)
-            }
-          })
-        const list = Object.keys(obj)
-        list.unshift('#')
-        commit('updateList', obj);
-        commit('upList', list);
+    async getMasterBrandList({ commit }, payload) {
+        let res = await getMasterBrandList()
+        // console.log('res...', res.data)
+        if (res.code === 1) {
+            // 处理数据
+            const obj = {}
+            res.data.forEach(item => {
+                if (!obj[item.Spelling.slice(0, 1)]) {
+                    obj[item.Spelling.slice(0, 1)] = [item]
+                } else {
+                    obj[item.Spelling.slice(0, 1)].push(item)
+                }
+            })
+            let keys = Object.keys(obj)
+            keys.unshift('#')
+            commit('masterKeys', keys)
+            commit('updateList', obj)
+ 
+        }
     }
 }
 
