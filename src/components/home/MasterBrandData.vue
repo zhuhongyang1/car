@@ -62,11 +62,12 @@ export default {
         // 获取 移动减去点击时的距离
         const disX = e.touches[0].clientX - this.start
         // 如果距离大于100 则判断为要隐藏 
-        if (disX >= 300) {
-          this.hide = true 
-        } else {
+        if (disX >= 200) {
           moveX <= this.offsetLeft ? moveX = this.offsetLeft : null 
           drawer.style.left = moveX + 'px'
+        }
+        if (disX >= 50) {
+          this.hide = true 
         }
 
       },  

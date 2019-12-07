@@ -1,13 +1,10 @@
 <template>
-  <div class="detail" v-if="Object.keys(carObj).length" ref="detail">
-    <router-link :to="{path:'/imgs',query:{SerialID:carObj.SerialID}}">
-      <div class="detail-header">
-        <img :src="carObj.CoverPhoto" alt="">
-        <p class="detail-header-p">{{carObj.pic_group_count}}张照片</p>
-      </div>
-    </router-link>
-   
-    <div class="info">
+  <div class="detail" ref="detail">
+    <div class="detail-header" @click="goImg">
+      <img :src="carObj.CoverPhoto" alt="">
+      <p class="detail-header-p">{{carObj.pic_group_count}}张照片</p>
+    </div>
+    <div class="info"  v-if="Object.keys(carObj).length">
       <div>
         <p class="info-red">{{carObj.market_attribute.dealer_price}}</p>
         <p class="info-gray">指导价 {{carObj.market_attribute.official_refer_price}}</p>
@@ -93,9 +90,8 @@ export default {
       }
     },
     // 如果再DOM 结构中使用了 v-if v-show或者v-for （根据后台数据获取的DOM即响应式） 那么这些DOM是不会在mountedj阶段找到的，只能在updated阶段找到
-    updated() {
+    mounted() {
       const detail = this.$refs.detail 
-      console.log(detail)
       let time = 100 
       const timer = setInterval(() => {
         time -= 10 

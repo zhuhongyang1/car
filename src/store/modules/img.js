@@ -1,25 +1,47 @@
 import { getImgList } from '@/services'
 
 const state = {
-    list: []
+    list: [],
+    ColorID: '',
+    CarId: '',
+    name: ''
 }
 
 const mutations = {
     updateList(state, payload) {
         state.list = payload
+    },
+    setColorID(state, payload) {
+        state.ColorID = payload
+    },
+    setCarId(state, payload) {
+        state.CarId = payload
+    },
+    setName(state, payload) {
+        state.name = payload
     }
 }
 
 const actions = {
-    async getImgList({commit}, payload) {
+    async getImgList({commit, state}, payload) {
+        // 判断是否存在 颜色ID
+        if (state.ColorID) {
+            payload.ColorID = state.ColorID
+        }
+        // 判断是否存在 车Id
+        if (state.CarId) {
+            payload.CarId = state.CarId
+        }
+
         const res = await getImgList(payload) 
+        // console.log(res)
         if (res.code === 1) {
             res.data.forEach(item1 => {
                 item1.List.forEach(item2 => {
                     item2.Url = item2.Url.replace('{0}', 2)
                 })
             })
-            console.log(res.data)
+            // console.log(res.data)
             commit('updateList', res.data)
         }
     }

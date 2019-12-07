@@ -13,16 +13,32 @@ import carSeries from './modules/carSeries'
 // 引入 详情页 子模块
 import detail from './modules/detail'
 
-import getImgsList from './modules/getImgsList'
+// 引入 图片 子模块
+import img from './modules/img'
+
+// 引入 颜色 子模块
+import color from './modules/color'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+  state: {
+    loadingFlag: false
+  },
+  mutations: {
+    showLoading(state) {
+      state.loadingFlag = true
+    },
+    hideLoading(state) {
+      state.loadingFlag = false
+    }
+  },
   modules: {
     home,
     carSeries,
     detail,
-    getImgsList
+    img,
+    color
   },
   // plugins: [ createLogger() ]
 })

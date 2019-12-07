@@ -1,11 +1,11 @@
 <template>
-  <div class="home" ref="home" >
+  <div class="home" ref="home"  >
     <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
 
     <!-- 首页左边列表组件 -->
     <MasterBrandList />
-     <!-- 导航组件 -->
+    <!-- 导航组件 -->
     <MasterBrandNav />
     <!-- 车系 -->
     <MasterBrandData />

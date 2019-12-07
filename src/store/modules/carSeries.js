@@ -11,6 +11,7 @@ const state = {
 const mutations = {
     // 点击标识
     isShow(state, payload) {
+        // console.log(payload)
         state.show = payload
     },
     // 同步更新数据
@@ -25,7 +26,6 @@ const actions = {
     async getCarSeries({commit}, payload) {
         const res = await carSeries(payload)
         if (res.code === 1) {
-            // console.log(res)
             commit('upCarSeriesList', res.data)
         }
     }
