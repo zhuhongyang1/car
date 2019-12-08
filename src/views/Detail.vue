@@ -26,7 +26,7 @@
                 {{item3}}
               </span>
             </p>
-            <button class="con-con-btn">{{carObj.BottomEntranceTitle}}</button>
+            <button class="con-con-btn" @click="floorPrice(item2.key1)">{{carObj.BottomEntranceTitle}}</button>
           </div>
         </div>
       </div>
@@ -66,6 +66,9 @@ export default {
       // console.log(this.$store)
     },
     methods: {
+      floorPrice(name){
+        this.$router.push({path:'/price',query:{carObj:this.carObj,name:name}})
+      },
       // 跳转img
       goImg() {
         const { id } = this.$route.query 
