@@ -19,6 +19,10 @@ import img from './modules/img'
 // 引入 颜色 子模块
 import color from './modules/color'
 
+import city from './modules/city'
+import ip from './modules/ip'
+import jxs from './modules/jxs'
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -38,7 +42,10 @@ export default new Vuex.Store({
     carSeries,
     detail,
     img,
-    color
-  },
+    color,
+    city,
+    ip,
+    jxs
+    },
   // plugins: [ createLogger() ]
 })
