@@ -3,7 +3,7 @@
     <div class="city-wrap">
         <div class="location">
             <p>自动定位</p>
-            <div class="defaultCity" @click="getCityName(defaultCity.CityName)">{{defaultCity.CityName}}</div>
+            <div class="defaultCity" @click="getCityName(defaultCity.CityName, defaultCity.CityID)">{{defaultCity.CityName}}</div>
         </div>
         <div class="list">
             <p>省市</p>
@@ -50,14 +50,18 @@ export default {
             // 设置城市名称
             setCityName: 'city/setCityName',
             // 设置主组件的标识
-            setCityFlag: 'city/setCityFlag'
+            setCityFlag: 'city/setCityFlag',
+            // 保存城市id
+            saveCityID: 'dealer/updateCityID'
         }),
         // 获取城市名称
-        getCityName(name) {
+        getCityName(name, id) {
             // 设置城市名称
             this.setCityName(name)
             // 关闭主组件
             this.setCityFlag(false)
+            // 保存城市ID
+            this.saveCityID(id)
             // 关闭父组件
             // this.$emit('update:cityFlag', false)
         },

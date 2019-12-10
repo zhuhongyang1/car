@@ -5,7 +5,8 @@ const state = {
     cityList: [],
     cityList2: [],
     cityName: '',
-    cityFlag: false
+    cityFlag: false,
+    cityID: ''
 }
 
 const mutations = {
@@ -28,6 +29,10 @@ const mutations = {
     // 设置主组件的 是否隐藏
     setCityFlag(state, payload) {
         state.cityFlag = payload
+    },
+    // 保存城市ID
+    saveCityID(state, payload) {
+        state.cityID = payload
     }
 }
 
@@ -37,6 +42,7 @@ const actions = {
         const res = await getAutoCity()
         if (res.code === 1) {
             commit('updataDefaultCity', res.data)
+            commit('saveCityID', res.data.CityID)
         }
     },
     // 获取1级城市列表

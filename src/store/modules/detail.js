@@ -36,7 +36,8 @@ const state = {
     year: [],
     car: {},
     carInfo: {},
-    defaultName: ''
+    defaultName: '',
+    carID: ''
 }
 
 const mutations = {
@@ -55,14 +56,18 @@ const mutations = {
         state.carInfo = payload
     },
     defaultData(state, payload) {
-        console.log(payload)
+        // console.log(payload)
         state.defaultName = payload
+    },
+    updateCarID(state, payload) {
+        state.carID = payload
     }
 }
 
 const actions = {
     async getDetailData({commit}, payload) {
         const res = await detailData(payload)
+        // console.log(res)
         if (res.code === 1) {
             // 排序
             sortCarList(res.data.list)
@@ -125,6 +130,8 @@ const actions = {
             // 汽车信息
             commit('updateCarInfo', objCarInfo)
             // 发送一个默认信息
+            const id = res.data.list[0].car_id
+            commit('updateCarID', id)
             let defaultInfo = data['全部'][0].list[0].key1
             // console.log(defaultInfo)
             commit('defaultData', defaultInfo)

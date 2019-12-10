@@ -26,6 +26,7 @@ const mutations = {
         state.colorName = payload
     },
     saveCarId(state, payload) {
+        // console.log(payload)
         state.saveCarId = payload
     }
 }

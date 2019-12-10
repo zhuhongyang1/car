@@ -1,5 +1,5 @@
 <template>
-  <div class="wrap">
+  <div class="wrap" >
     <div class="price-wrap" v-show="!cityFlag">
       <header class="header">
         可向多个商家咨询最低价，商家及时回复
@@ -20,11 +20,11 @@
         <ul class="con-info-ul">
           <li>
             <span>姓名</span>
-            <input type="text" placeholder="输入您的真实中文姓名">
+            <input type="text" placeholder="输入您的真实中文姓名" maxlength="4" v-model="username">
           </li>
           <li>
             <span>手机</span>
-            <input type="text" placeholder="输入您的真实手机号码">
+            <input type="text" placeholder="输入您的真实手机号码" maxlength="11" v-model="phone" >
           </li>
           <li class="city">
             <span>城市</span>
@@ -34,13 +34,11 @@
         </ul>
 
         <div class="quotation">
-          <button>
+          <button @click="badPrice">
             询最低价
           </button>
         </div>
-
-        <!-- 引入 下面的子组件 -->
-        <QuotationLast />
+ 
       </div>
 
     </div>
@@ -50,11 +48,22 @@
       <City  v-show="cityFlag"  />
     </transition>
     
+
+    <!-- 经销商组件 -->
+    <Dealer ref="dealer" />
+
+    <div v-show="footerFlag" class="footer">
+      寻最低价
+    </div>
+    
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
+import { Dialog } from 'vant';
+
+
 
 // 引入 城市列表组件 
 import City from '@/components/home/City/CityOne.vue'
@@ -62,10 +71,21 @@ import City from '@/components/home/City/CityOne.vue'
 // 引入 下面的组件
 import QuotationLast from '@/components/home/City/Last'
 
+// 引入 经销商组件
+import Dealer from '@/components/Dealer'
+
 export default {
+  data() {
+    return {
+      username: '',
+      phone: '',
+      footerFlag: false
+    }
+  },
   components: {
     City,
-    QuotationLast
+    QuotationLast,
+    Dealer
   },
   computed: {
     ...mapState({
@@ -81,7 +101,56 @@ export default {
       getCarId: state => state.img.saveCarId
     })
   },
+
   methods: {
+    // 滚动
+    scrollFunc() {
+      const dealer = this.$refs.dealer.$refs.dealer
+      const dealerTop = dealer.offsetTop - 62
+      window.addEventListener('scroll', () => {
+        // console.log('----------------', 1111111)
+        let top = window.pageYOffset
+        // console.log(top, dealerTop)
+        if (top >= dealerTop) {
+          this.footerFlag = true
+        } else {
+          this.footerFlag = false
+        }
+      })
+    },
+    // btn询问最低价
+    badPrice() {
+
+      // 匹配2-4个中文字符
+      const userReg = /^[\u4E00-\u9FA5]{2,4}$/g
+      // 匹配手机号
+      const phoneReg = /^1[3456789]\d{9}$/
+      let userNameFlag = false
+      let phoneFlag = false
+      if (this.username.trim() && this.phone.trim()) {
+        if (userReg.test(this.username)) {
+          userNameFlag = true
+        } else {
+          // 请输入真实姓名
+          Dialog({ message: '请输入真实姓名' });
+        }
+
+        if (phoneReg.test(this.phone)) {
+          phoneFlag = true
+        } else {
+          // 请输入真实手机号码
+          Dialog({ message: '请输入真实手机号码' });
+        }
+      } else {
+        // 账号或密码不能为空
+        Dialog({ message: '账号或密码不能为空' });
+      }
+
+      // 姓名和手机号都正确
+      if (userNameFlag && phoneFlag) {
+        // 验证成功，to do something
+      } 
+    },
     // 跳转Type
     goType() {
       this.$router.push(`type?id=${this.getCarId}`)
@@ -105,14 +174,39 @@ export default {
     this.getDefaultCity()
     // 调用获取一级城市列表函数
     this.getCityListOne()
+  },
+  mounted() {
+    this.scrollFunc()
   }
 }
 </script>
 
 <style lang="scss" scoped> 
 
+.footer {
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  background: #3aacff;
+  text-align: center;
+  font-size: 17px;
+  color: #fff;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+}
 
+.wrap {
+  // height: 100%;
+  padding-bottom: 50px;
+  box-sizing: border-box;
+  overflow-y: scroll;
+}
 
+.price-wrap {
+  padding-top: 30px;
+  box-sizing: border-box;
+}
 
 .scroll-top-enter, .scroll-top-leave-to {
   transform: translate3d(0, 100%, 0);
@@ -252,5 +346,8 @@ export default {
   z-index: 99;
   color: #fff;
   font-size: 16px;
+  position: fixed;
+  left: 0;
+  top: 0;
 }
 </style>

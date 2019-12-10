@@ -22,6 +22,9 @@ import color from './modules/color'
 // 引入 城市 子模块
 import city from './modules/city'
 
+// 引入 经销商 子模块
+import dealer from './modules/dealer'
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -42,7 +45,8 @@ export default new Vuex.Store({
     detail,
     img,
     color,
-    city
+    city,
+    dealer
   },
   // plugins: [ createLogger() ]
 })

@@ -1,7 +1,7 @@
 <template>
     <div class="city-two-wrap">
         <ul class="city-list" @click="getCityName">
-            <li :data-name="item.CityName" v-for="(item, index) in cityList" :key="index">
+            <li :data-name="item.CityName" :data-city="item.CityID" v-for="(item, index) in cityList" :key="index">
                 {{item.CityName}}
             </li>
         </ul>
@@ -23,11 +23,16 @@ export default {
             // 设置城市名称
             setCityName: 'city/setCityName',
             // 设置主组件的标识
-            setCityFlag: 'city/setCityFlag'
+            setCityFlag: 'city/setCityFlag',
+            // 保存城市id
+            saveCityID: 'dealer/updateCityID'
         }),
         // 获取城市名称
         getCityName(e) {
-            const { name } = e.target.dataset
+            const { name, city } = e.target.dataset
+            // 保存城市ID
+            // console.log(city)
+            this.saveCityID(city)
             // 设置城市名称
             this.setCityName(name)
             // 关闭主组件

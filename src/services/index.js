@@ -5,6 +5,7 @@ import { getImgList } from './modules/img'
 import { getColorList } from './modules/color'
 import { getAutoCity } from './modules/autoCity'
 import { getCityList } from './modules/cityList'
+import { dealerFunc } from './modules/dealer'
 
 
 export {
@@ -14,5 +15,6 @@ export {
     getImgList,
     getColorList,
     getAutoCity,
-    getCityList
+    getCityList,
+    dealerFunc
 }
