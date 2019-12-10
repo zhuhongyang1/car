@@ -11,12 +11,24 @@ const routes = [
     component: Home
   },
   {
+    path: '/color',
+    component: () => import('../views/Color.vue')
+  },
+  {
+    path: '/type',
+    component: () => import('../views/Type.vue')
+  },
+  {
     path: '/detail',
     component: () => import('../views/Detail.vue')
   },
   {
-    path: '/imgs',
-    component: () => import('../views/imgs.vue')
+    path: '/img',
+    component: () => import('../views/Img.vue')
+  },
+  {
+    path: '/price',
+    component: () => import('../views/Price.vue')
   },
   {
     path: '/about',

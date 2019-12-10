@@ -17,7 +17,7 @@
 
 <script>
 
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 
 export default {
     computed: {
@@ -27,8 +27,12 @@ export default {
         })
     },
     methods: {
+        ...mapMutations({
+            isShow: 'carSeries/isShow'
+        }),
         toDetail(e) {
             const { id } = e.target.dataset
+            this.isShow(false)
             this.$router.push(`detail?id=${id}`)
         }
     }

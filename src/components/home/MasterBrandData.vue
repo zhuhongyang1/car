@@ -1,16 +1,15 @@
 <template>
-  <div class="matser-brand-data-wrap">
-    <div class="matser-brand-data-drawer" 
-      ref="drawer"
-      @touchstart="touchStart"
-      @touchmove="touchMove"
-      @touchend="touchEnd"
-    >
-      
-      <!-- 引入item组件 -->
-      <CarseriesItem />
+  <div class="matser-brand-data-drawer" 
+    ref="drawer"
+    @touchstart="touchStart"
+    @touchmove="touchMove"
+    @touchend="touchEnd"
+  >
+    
+    <!-- 引入item组件 -->
+    <CarseriesItem />
 
-    </div>
+    
   </div>
 </template>
 
@@ -32,15 +31,14 @@ export default {
     watch: {
       // watch监听show，如果show改变了，那么就是点击了页面，需要调车系的弹窗
       show(newQuestion, oldQuestion) {
-        // 如果drawer存在，并且也点击了页面，那么就操作DOM添加class名
         const drawer = this.$refs.drawer
-        if (drawer && newQuestion) {
-          drawer.classList.add('active')
-          drawer.classList.remove('activeEnd')
-          drawer.style.left = '25%'
+        if (newQuestion) {
+            drawer.classList.add('active')
+            drawer.classList.remove('activeEnd')
         } else {
-          drawer.classList.remove('active')
+            drawer.classList.remove('active') 
         }
+
       }
     },
     methods: {
@@ -50,34 +48,37 @@ export default {
       touchStart(e) {
           // 需要操作drawer，使用refs 获取DOM
           const drawer = this.$refs.drawer
-          // 获取 点击时的 x坐标
-          this.touchStart = e.touches[0].clientX
-          // 获取 点击时的 drawer 距离左边多少
+          // 获取 点击时的的坐标 - 本身的offsetLeft
+          this.startX = e.touches[0].clientX - drawer.offsetLeft 
+          // 获取本身的offsetLeft
           this.offsetLeft = drawer.offsetLeft
+          // 获取 点击时的位置
+          this.start = e.touches[0].clientX
       },
       touchMove(e) {
-          // 需要操作drawer，使用refs 获取DOM
-          const drawer = this.$refs.drawer
-          // 获取移动的  x
-          const x = e.touches[0].clientX
-          // 获取 不断移动-点击 时的距离 = 移动了多长
-          const disX = x - this.touchStart
-          // 此时 drawer的 left 就是 this.offsetLeft + disX
-          let left = this.offsetLeft + disX
-          // 计算边界情况
-          left >= 640 ? left = 640 : left <= this.offsetLeft ? left = this.offsetLeft : null
-          // 如果超出边界，那么把标识改为false
-          left >= 640 ? this.isShow(false) : null
-          // 赋值
-          drawer.style.left = left + 'px'
-        
-          // console.log('touchMove---', e)
+        const drawer = this.$refs.drawer
+        // 获取现在的x
+        let moveX = e.touches[0].clientX - this.startX
+        // 获取 移动减去点击时的距离
+        const disX = e.touches[0].clientX - this.start
+        // 如果距离大于100 则判断为要隐藏 
+        if (disX >= 200) {
+          moveX <= this.offsetLeft ? moveX = this.offsetLeft : null 
+          drawer.style.left = moveX + 'px'
+        }
+        if (disX >= 50) {
+          this.hide = true 
+        }
+
       },  
       touchEnd(e) {
+        if (this.hide) {
+          this.isShow(false)
           const drawer = this.$refs.drawer
-          drawer && drawer.classList.add('activeEnd')
-          this.isShow(false) 
-          // console.log('touchEnd---', e)
+          drawer.style.left = '25%'
+          drawer.classList.add('activeEnd')
+          this.hide = false
+        }
       }
     }
 
@@ -88,11 +89,12 @@ export default {
 <style lang="scss" scoped>
 
 .matser-brand-data-drawer {
-    width: 75%;
+    width: 100%;
     height: 100%;
     overflow-y: scroll;
     position: fixed;
     left: 100%;
+    // left: 25%;
     top: 0;
     z-index: 9999;
     background: #fff;

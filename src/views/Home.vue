@@ -1,11 +1,11 @@
 <template>
-  <div class="home" ref="home" >
+  <div class="home" ref="home"  >
     <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
 
     <!-- 首页左边列表组件 -->
     <MasterBrandList />
-     <!-- 导航组件 -->
+    <!-- 导航组件 -->
     <MasterBrandNav />
     <!-- 车系 -->
     <MasterBrandData />
@@ -38,16 +38,16 @@ export default {
       getMasterBrandList: 'home/getMasterBrandList'
     }),
     animation() {
-      const home = this.$refs.home 
+      const home = this.$refs.home
       let time = 100
-      let timer = setInterval(() => {
-        time -= 20
+      const timer = setInterval(() => {
+        time -= 10
         if (time <= 0) {
-        time = 0
-        clearInterval(time)
+          time = 0
+          clearInterval(timer)
         }
         home.style.marginLeft = time + '%'
-      }, 50)
+      }, 10)
     }
   },
   created() {
@@ -61,11 +61,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+
+
 .home {
   width: 100%;
   height: 100%;
   position: relative;
+  overflow-y: scroll;
+  margin-left: 100%;
 }
+
+
 </style>
 
  

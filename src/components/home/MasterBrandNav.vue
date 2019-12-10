@@ -31,7 +31,7 @@ export default {
     methods: {
         touchInit(e) {
             let y = e.touches[0].clientY - this.offsetTop
-            let index = Math.floor(y / 30)
+            let index = Math.floor(y / (e.target.offsetHeight))
             index <= 1 ? index = 1 : index >= this.masterKeys.length - 1 ? index = this.masterKeys.length - 1 : null
             this.scrollToList(this.masterKeys[index])
         },

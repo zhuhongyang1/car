@@ -1,26 +1,25 @@
 <template>
-  <div class="detail" v-if="Object.keys(carObj).length">
-    <router-link :to="{path:'/imgs',query:{SerialID:carObj.SerialID}}">
-      <div class="detail-header">
-        <img :src="carObj.CoverPhoto" alt="">
-        <p class="detail-header-p">{{carObj.pic_group_count}}张照片</p>
-      </div>
-    </router-link>
-   
-    <div class="info">
+
+  <div class="detail" ref="detail">
+    <div class="detail-header" @click="goImg">
+      <img :src="carObj.CoverPhoto" alt="">
+      <p class="detail-header-p">{{carObj.pic_group_count}}张照片</p>
+    </div>
+    <div class="info"  v-if="Object.keys(carObj).length">
       <div>
         <p class="info-red">{{carObj.market_attribute.dealer_price}}</p>
         <p class="info-gray">指导价 {{carObj.market_attribute.official_refer_price}}</p>
       </div>
-      <button class="info-btn">{{carObj.BottomEntranceTitle}}</button>
+      <button class="info-btn" @click="goPrice">{{carObj.BottomEntranceTitle}}</button>
     </div>
-    <div class="container">
+    <div class="container"  v-if="Object.keys(carObj).length">
       <div class="con-div" >
         <span @click="tab(index, item)" :class="{ active: actives === index }" v-for="(item, index) in yearList" :key="index">{{item}}</span>
       </div>
       <div class="con-con">
         <div v-for="(item, index) in dataObj[item]" :key="index" class="item">
-          <p class="con-key-p">{{item.key}}</p>
+
+          <p class="con-key-p">{{/^\//.test(item.key) ? '' : item.key}}</p>
           <div class="con-con-div" v-for="(item2, i2) in item.list" :key="i2">
             <p class="p1">{{item2.key1}}</p>
             <p class="p2">{{item2.key2}}</p>
@@ -29,7 +28,7 @@
                 {{item3}}
               </span>
             </p>
-            <button class="con-con-btn">{{carObj.BottomEntranceTitle}}</button>
+            <button class="con-con-btn" @click="goPrice({key: item2.key1, id: item2.id})">{{carObj.BottomEntranceTitle}}</button>
           </div>
         </div>
       </div>
@@ -38,13 +37,13 @@
       <p>{{carObj.BottomEntranceTitle}}</p>
       <p>本地经销商为你报价</p>
     </div>
-  </div>
+  </div>    
 </template>
 
 <script>
 
 // 引入 vuex 的辅助方法
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 
 export default {
     data() {
@@ -69,11 +68,31 @@ export default {
       // console.log(this.$store)
     },
     methods: {
+      // 跳转price
+      // 激活 mutations
+      ...mapMutations({
+        saveCarId: 'img/saveCarId',
+        defaultData: 'detail/defaultData',
+        updateCarID: 'dealer/updateCarID'
+      }),
+      // 显示price组件
+      goPrice(obj) {
+        // 存储ID
+        const { key, id } = obj
+        key && this.defaultData(key)
+        this.updateCarID(id)
+        this.$router.push('price')
+      },
+      // 跳转img
+      goImg() {
+        const { id } = this.$route.query
+        this.$router.push(`img?id=${id}`)
+      },
       // tab切换
       tab(i, item) {
         this.actives = i
         this.item = item
-        console.log(this.dataObj[item])
+        // console.log(this.dataObj[item])
       },
       // 辅助方法
       ...mapActions({
@@ -83,10 +102,27 @@ export default {
       // 获取ID
       getId() {
         const { id } = this.$route.query
+        // 存入ID
+        this.updateCarID(id)
+        // 存入ID
+        this.saveCarId(id)
         // 根据传过来的ID 获取数据
         this.getDetailData(id)
       }
-    }
+    },
+    // 如果再DOM 结构中使用了 v-if v-show或者v-for （根据后台数据获取的DOM即响应式） 那么这些DOM是不会在mountedj阶段找到的，只能在updated阶段找到
+    mounted() {
+      const detail = this.$refs.detail 
+      let time = 100 
+      const timer = setInterval(() => {
+        time -= 10 
+        if (time <= 0) {
+          time = 0
+          clearInterval(timer)
+        }
+        detail.style.left = time + '%'
+      }, 10)
+    },
 }
 </script>
 
@@ -95,6 +131,9 @@ export default {
 .detail {
   padding-bottom: 50px;
   box-sizing: border-box;
+  position: absolute;
+  left: 100%;
+  width: 100%;
 }
 
 .bottom {
