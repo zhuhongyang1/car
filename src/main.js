@@ -22,6 +22,12 @@ Vue.use(VueLazyload, {
   loading: require('./assets/timg.gif'),
   attempt: 1
 })
+
+// 引入 Vant
+import vant from 'vant';
+import 'vant/lib/index.css';
+
+Vue.use(Vant);
  
 // // 引入loading
 // import loading from './components/loading/index'

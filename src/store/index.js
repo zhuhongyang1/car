@@ -19,9 +19,11 @@ import img from './modules/img'
 // 引入 颜色 子模块
 import color from './modules/color'
 
+// 引入 城市 子模块
 import city from './modules/city'
-import ip from './modules/ip'
-import jxs from './modules/jxs'
+
+// 引入 经销商 子模块
+import dealer from './modules/dealer'
 
 Vue.use(Vuex)
 
@@ -44,8 +46,7 @@ export default new Vuex.Store({
     img,
     color,
     city,
-    ip,
-    jxs
-    },
+    dealer
+  },
   // plugins: [ createLogger() ]
 })

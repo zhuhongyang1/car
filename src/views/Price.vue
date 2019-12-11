@@ -1,176 +1,353 @@
 <template>
-  <div>
-    <div class="box"  v-show="!ff">
-      <p class="logo">可向多个商家咨询最低价，商家及时回复</p>
-      <div class="top0">
-        <img :src="carObj.Picture" alt />
-        <div class="content">
-          <p>{{carObj.AliasName}}</p>
-          <p>{{title}}</p>
+  <div class="wrap" >
+    <div class="price-wrap" v-show="!cityFlag">
+      <header class="header">
+        可向多个商家咨询最低价，商家及时回复
+      </header>
+      <div class="content">
+        <div @click="goType" class="con-info">
+          <img :src="carInfoObj.pic" alt="">
+          <div class="con-info-div">
+            <p>{{carInfoObj.name}}</p>
+            <p>{{defaultName}}</p>
+          </div>
         </div>
+        
+        <div class="self-info">
+          <p>个人信息</p>
+        </div>
+
+        <ul class="con-info-ul">
+          <li>
+            <span>姓名</span>
+            <input type="text" placeholder="输入您的真实中文姓名" maxlength="4" v-model="username">
+          </li>
+          <li>
+            <span>手机</span>
+            <input type="text" placeholder="输入您的真实手机号码" maxlength="11" v-model="phone" >
+          </li>
+          <li class="city">
+            <span>城市</span>
+            <span @click="choiceCity">{{getCityName || defaultCity.CityName}}</span>
+          </li>
+          
+        </ul>
+
+        <div class="quotation">
+          <button @click="badPrice">
+            询最低价
+          </button>
+        </div>
+ 
       </div>
-      <p class="tip">个人信息</p>
-      <ul>
-        <li>
-          <span>姓名</span>
-          <input type="text" placeholder="输入你的真实中文姓名" maxlength="4" />
-        </li>
-        <li>
-          <span>手机</span>
-          <input type="text" placeholder="输入你的真实手机号码" maxlength="11" />
-        </li>
-        <li>
-          <span>城市</span>
-          <span class="bj" @click="city">{{name}}</span>
-        </li>
-      </ul>
-      <div class="btn">
-        <button>询问最低价</button>
-      </div>
-      <p class="tip">选择报价经销商</p>
+
     </div>
-    <div  v-show="ff">
-        <City  :show.sync="ff" :cityName.sync="name"/>
+    
+    <!-- 城市列表组件 -->
+    <transition name="scroll-top">
+      <City  v-show="cityFlag"  />
+    </transition>
+    
+
+    <!-- 经销商组件 -->
+    <Dealer ref="dealer" />
+
+    <div v-show="footerFlag" class="footer">
+      寻最低价
     </div>
-    <Jxs />
+    
   </div>
 </template>
 
 <script>
-import City from './City'
-import Jxs from './Jxs'
+import { mapState, mapMutations, mapActions } from 'vuex'
+import { Dialog } from 'vant';
+
+
+
+// 引入 城市列表组件 
+import City from '@/components/home/City/CityOne.vue'
+
+// 引入 下面的组件
+import QuotationLast from '@/components/home/City/Last'
+
+// 引入 经销商组件
+import Dealer from '@/components/Dealer'
+
 export default {
-  props: ["carObj", "title"],
   data() {
     return {
-        ff :false,
-        name:'北京'
-    };
-  },
-  components:{
-      City,
-      Jxs
-  },
-  methods: {
-    city() {
-      this.ff = true
+      username: '',
+      phone: '',
+      footerFlag: false
     }
+  },
+  components: {
+    City,
+    QuotationLast,
+    Dealer
+  },
+  computed: {
+    ...mapState({
+      // 主组件的标识
+      cityFlag: state => state.city.cityFlag,
+      carInfoObj: state => state.detail.carInfo,
+      defaultName: state => state.detail.defaultName,
+      // 自动选择的城市名称
+      defaultCity: state => state.city.defaultCity,
+      // 获取选择的城市名称
+      getCityName: state => state.city.cityName,
+      // 获取car ID
+      getCarId: state => state.img.saveCarId
+    })
+  },
+
+  methods: {
+    // 滚动
+    scrollFunc() {
+      const dealer = this.$refs.dealer.$refs.dealer
+      const dealerTop = dealer.offsetTop - 62
+      window.addEventListener('scroll', () => {
+        // console.log('----------------', 1111111)
+        let top = window.pageYOffset
+        // console.log(top, dealerTop)
+        if (top >= dealerTop) {
+          this.footerFlag = true
+        } else {
+          this.footerFlag = false
+        }
+      })
+    },
+    // btn询问最低价
+    badPrice() {
+
+      // 匹配2-4个中文字符
+      const userReg = /^[\u4E00-\u9FA5]{2,4}$/g
+      // 匹配手机号
+      const phoneReg = /^1[3456789]\d{9}$/
+      let userNameFlag = false
+      let phoneFlag = false
+      if (this.username.trim() && this.phone.trim()) {
+        if (userReg.test(this.username)) {
+          userNameFlag = true
+        } else {
+          // 请输入真实姓名
+          Dialog({ message: '请输入真实姓名' });
+        }
+
+        if (phoneReg.test(this.phone)) {
+          phoneFlag = true
+        } else {
+          // 请输入真实手机号码
+          Dialog({ message: '请输入真实手机号码' });
+        }
+      } else {
+        // 账号或密码不能为空
+        Dialog({ message: '账号或密码不能为空' });
+      }
+
+      // 姓名和手机号都正确
+      if (userNameFlag && phoneFlag) {
+        // 验证成功，to do something
+      } 
+    },
+    // 跳转Type
+    goType() {
+      this.$router.push(`type?id=${this.getCarId}`)
+    },
+    choiceCity() {
+      this.setCityFlag(true)
+    },
+    ...mapActions({
+      // 默认城市
+      getDefaultCity: 'city/getDefaultCity',
+      // 1级城市列表
+      getCityListOne: 'city/getCityListOne',
+    }),
+    ...mapMutations({
+      // 设置主组件的标识
+      setCityFlag: 'city/setCityFlag'
+    })
+  },
+  created() {
+    // 调用默认城市函数
+    this.getDefaultCity()
+    // 调用获取一级城市列表函数
+    this.getCityListOne()
+  },
+  mounted() {
+    this.scrollFunc()
   }
-};
+}
 </script>
 
-<style lang="scss" scoped>
-.logo {
+<style lang="scss" scoped> 
+
+.footer {
   width: 100%;
-  height: 30px;
-  background: #79cd92;
-  color: #fff;
-  line-height: 30px;
+  height: 50px;
+  line-height: 50px;
+  background: #3aacff;
   text-align: center;
-  font-size: 15px;
+  font-size: 17px;
+  color: #fff;
+  position: fixed;
+  left: 0;
+  bottom: 0;
 }
-.top0 {
-  width: 100%;
-  height: 100px;
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-around;
-  align-items: center;
-  span {
-    font: 30px;
-    color: #ccc;
-  }
+
+.wrap {
+  // height: 100%;
+  padding-bottom: 50px;
+  box-sizing: border-box;
+  overflow-y: scroll;
 }
-.top0:before {
+
+.price-wrap {
+  padding-top: 30px;
+  box-sizing: border-box;
+}
+
+.scroll-top-enter, .scroll-top-leave-to {
+  transform: translate3d(0, 100%, 0);
+}
+
+.scroll-top-enter-active, .scroll-top-leave-active {
+  transition: all .1s linear;
+}
+
+
+.city span:nth-child(2):after {
   content: "";
   display: inline-block;
-  padding-top: 0.16rem;
-  padding-right: 0.16rem;
-  border-top: 3px solid #ccc;
-  border-right: 3px solid #ccc;
+  padding-top: 8px;
+  padding-right: 8px;
+  border-top: 1px solid silver;
+  border-right: 1px solid silver;
   -webkit-transform: rotate(45deg);
   transform: rotate(45deg);
-  position: absolute;
-  right: 0.35rem;
-  top: 1.7rem;
 }
-img {
-  widows: 115%;
-  height: 70.5px;
+
+.city span:nth-child(2) {
+  display: inline-block;
+  width: 88%;
+  color: #555;
+  text-align: right;
+  box-sizing: border-box;
+}
+
+.quotation {
+  background: #fff;
+  text-align: center;
+  padding-top: 15px;
+  padding-bottom: 14px;
+
+  button {
+    font-size: 16px;
+    color: #fff;
+    width: 80%;
+    background: #3aacff;
+    height: 35px;
+    border-radius: 5px;
+  }
+
+}
+
+.con-info-ul {
+    background: #fff;
+    padding: 0 10px;
+    font-size: 16px;
+
+    li {
+      font-size: 16px;
+      height: 44px;
+      line-height: 44px;
+      border-bottom: 1px solid #eee;
+      box-sizing: border-box;
+      color: #000;
+
+      input {
+        border: none;
+        padding-right: 10px;
+        width: 88%;
+        text-align: right;
+        box-sizing: border-box;
+        color: #555;
+      }
+
+    }
+
+}
+
+.self-info {
+
+  p {
+    padding: 0 10px;
+    height: 25px;
+    line-height: 25px;
+    color: #666;
+    background: #eee;
+  }
+}
+
+.con-info-div {
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+  padding-left: 10px;
+  box-sizing: border-box;
+  p:nth-child(1) {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+}
+
+.con-info {
+  display: flex;
+  background: #fff;
+  padding: 16px 9px 14px;
+  position: relative;
+  height: 100px;
+  box-sizing: border-box;
+}
+
+.con-info img {
+  width: 115px;
+  height: 71px;
   border: 1px solid #eee;
   box-sizing: border-box;
   border-radius: 5px;
 }
-.content p:nth-child(1) {
-  width: 215px;
-  height: 18px;
-  font-size: 18px;
+
+.con-info::before {
+  content: "";
+  display: inline-block;
+  padding-top: 10px;
+  padding-right: 10px;
+  border-top: 2px solid #ccc;
+  border-right: 2px solid #ccc;
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  margin-top: -5px;
 }
-.content p:nth-child(2) {
-  width: 215px;
-  height: 19px;
-  font-size: 16px;
-  margin: 13px 0px 0px;
-  line-height: 19px;
-}
-.tip {
-  height: 25px;
+
+
+.header {
+  height: 30px;
+  line-height: 30px;
   width: 100%;
-  background: #eee;
-  color: #666;
-  line-height: 25px;
-  text-indent: 1em;
-}
-ul {
-  font-size: 16px;
-  li {
-    height: 44px;
-    text-indent: 1em;
-    border-bottom: 1px solid #bbb;
-    box-sizing: border-box;
-    line-height: 44px;
-  }
-  li span:nth-child(2):after {
-    content: "";
-    display: inline-block;
-    padding-top: 0.16rem;
-    padding-right: 0.16rem;
-    border-top: 3px solid #ccc;
-    border-right: 3px solid #ccc;
-    transform: rotate(45deg);
-    position: absolute;
-    right: 0.35rem;
-    top: 260px;
-  }
-  input {
-    width: 312px;
-    height: 21px;
-    border: none;
-    text-indent: 8em;
-    text-align: right;
-    color: #555;
-  }
-  .bj {
-    margin-left: 270px;
-    color: #555;
-    font-size: 16px;
-  }
-}
-.btn {
-  width: 100%;
-  height: 64px;
+  background: #79cd92;
   text-align: center;
-  margin-top: 16px;
-  border: none;
-  background: #fff;
-  padding: 1px 6px;
-  button {
-    width: 300px;
-    height: 35px;
-    color: #fff;
-    background: #3aa3ff;
-    font-size: 16px;
-    border-radius: 0.1rem;
-  }
+  z-index: 99;
+  color: #fff;
+  font-size: 16px;
+  position: fixed;
+  left: 0;
+  top: 0;
 }
 </style>

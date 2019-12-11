@@ -1,10 +1,23 @@
 <template>
   <div class="img-wrap" ref="wrap">
     <div class="title" ref="title">
-        <p @click="setColor">颜色</p>
-        <p @click="setType" >{{name || '车款'}}</p>
+        <p @click="setColor">
+            <span>
+                <em>
+                    {{colorName || '颜色'}}
+                </em>
+            </span>
+        </p>
+        <!-- <p @click="setColor">颜色</p> -->
+        <p @click="setType" >
+            <span>
+                <em>
+                    {{name || '车款'}}
+                </em>
+            </span>
+        </p>
     </div>
-    <ul class="img-con">
+    <ul class="img-con" v-show="!colorFlag">
         <li v-for="(item1, index1) in list" :key="index1" class="img-li">
             <div class="mark">
                 <p>{{item1.Name}}</p>
@@ -25,19 +38,55 @@
         </li>
         <li class="bottom"></li>
     </ul>
-    <div v-if="!list.length" class="empty">内容不存在！</div>
+    <div v-show="!list.length" class="empty">内容不存在！</div>
+    
+    <!-- 颜色组件 -->
+    <transition name="scroll-top" >
+        <Color v-show="colorFlag" :showColor.sync="colorFlag"/>  
+    </transition>  
+
+
+    <!-- 车款
+    <transition name="scroll-top" >
+        <Type v-show="carTypeFlag" :showType.sync="carTypeFlag"/>  
+    </transition>   -->
 
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+// 引入 颜色 组件
+import Color from '@/components/home/Color/Color'
+
+// 引入 车款 组件
+// import Type from '../components/home/Type/Type'
+
+import { mapState, mapActions, mapMutations } from 'vuex'
 
 export default {
+    beforeDestroy() {
+        console.log(1)
+        this.init()
+    },
+    data() {
+        return {
+            colorFlag: false
+        }
+    },
+    components: {
+        Color,
+        // Type
+    },
     computed: {
         ...mapState({
             list: state => state.img.list,
-            name: state => state.img.name
+            name: state => state.img.name,
+            // colorID
+            ColorID: state => state.img.ColorID,
+            // carID
+            CarId: state => state.img.CarId,
+            // colorName
+            colorName: state => state.img.colorName
         })
     },
     created() {
@@ -46,7 +95,29 @@ export default {
     mounted() {
         this.animation()
     },
+    watch: {
+        ColorID(newQuestion, oldQuestion) {
+            this.getImgList({SerialID: this.id})
+        },
+        // CarId(newQuestion, oldQuestion) {
+        //     this.getImgList({SerialID: this.id})
+        // },
+    },
     methods: {
+        // 组件销毁前 初始化数据
+        init() {
+            this.setColorName('')
+            this.setName('')
+            this.setColorID('')
+            this.setCarId('')
+        },
+        // 设置数据
+        ...mapMutations({
+            setColorName: 'img/setColorName',
+            setName: 'img/setName',
+            setColorID: 'img/setColorID',
+            setCarId: 'img/setCarId',
+        }),
         // 动画
         animation() {
             const wrap = this.$refs.wrap 
@@ -63,7 +134,8 @@ export default {
             }, 10)
         },
         setColor() {
-            this.$router.push(`color?id=${this.id}`)
+            this.colorFlag = true
+            // this.$router.push(`color?id=${this.id}`)
         },
         setType() {
             this.$router.push(`type?id=${this.id}`)
@@ -81,16 +153,27 @@ export default {
 
 <style scoped lang="scss">
 
+.scroll-top-enter, .scroll-top-leave-to {
+    transform: translate3d(0, 100%, 0)
+}
+
+.scroll-top-enter-active, .scroll-top-leave-active {
+    transition: transform .3s linear;
+}
+
+
+
+
 .empty {
     width: 100%;
-    height: 90%;
+    height: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     position: absolute;
     z-index: 1111;
     left: 0;
-    top: 50px;
+    top: 30%;
     font-size: 26px;
 }
 
@@ -141,18 +224,23 @@ export default {
     top: 0;
     left: 0;
     p {
-        height: 25px;
+        height: 30px;
+        line-height: 30px;
         flex:1;
         box-sizing: border-box;
         color: #454545;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        text-align: center;
         font-size: 12px;
+
+        span {
+            display: inline-block;
+            max-width: 135px;
+            line-height: 15px;
+        }
+
         &:after {
             content: "";
-            margin-top: -4px;
-            display: inline-block;
+            // display: inline-block;
             padding-top: 6px;
             padding-right: 6px;
             border-top: 2px solid #ccc;
@@ -161,11 +249,18 @@ export default {
             transform: rotate(135deg);
             margin-left: .2rem;
             vertical-align: 5%;
+            position: absolute;
+            top: 10px;
         }
     }
     
     p:nth-child(2) {
         border-left: 1px solid#ececec;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 2;
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
     }
 }
 

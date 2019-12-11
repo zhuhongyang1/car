@@ -3,15 +3,18 @@ import { carSeries } from './modules/carSeries'
 import { detailData } from './modules/detail'
 import { getImgList } from './modules/img'
 import { getColorList } from './modules/color'
-import {cityList} from './modules/city'
-import {ip} from './modules/ip'
-import {jxs} from './modules/jxs'
+import { getAutoCity } from './modules/autoCity'
+import { getCityList } from './modules/cityList'
+import { dealerFunc } from './modules/dealer'
+
+
 export {
     getMasterBrandList,
     carSeries,
     detailData,
     getImgList,
     getColorList,
-    cityList,
-    ip
+    getAutoCity,
+    getCityList,
+    dealerFunc
 }

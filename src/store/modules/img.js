@@ -4,7 +4,9 @@ const state = {
     list: [],
     ColorID: '',
     CarId: '',
-    name: ''
+    name: '',
+    colorName: '',
+    saveCarId: ''
 }
 
 const mutations = {
@@ -19,6 +21,13 @@ const mutations = {
     },
     setName(state, payload) {
         state.name = payload
+    },
+    setColorName(state, payload) {
+        state.colorName = payload
+    },
+    saveCarId(state, payload) {
+        // console.log(payload)
+        state.saveCarId = payload
     }
 }
 

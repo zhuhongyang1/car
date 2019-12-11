@@ -8,16 +8,16 @@
       </div>
       <div class="con-con" >
         <div v-for="(item, index) in dataObj[item]" :key="index" class="item">
-          <p class="con-key-p">{{item.key}}</p>
+          <p class="con-key-p">{{/^\//.test(item.key) ? '' : item.key}}</p>
           <div @click="setCar" :data-name="item2.key1" :data-id="item2.id" class="con-con-div" v-for="(item2, i2) in item.list" :key="i2">
             <p :data-name="item2.key1" :data-id="item2.id" class="p1">{{item2.key1}}</p>
             <p :data-name="item2.key1" :data-id="item2.id" class="p2">{{item2.key2}}</p>
             <p :data-name="item2.key1" :data-id="item2.id">
               <span  :data-name="item2.key1" v-for="(item3, i3) in item2.key3" :key="i3">
-                {{/^起/.test(item3) ? '' : item3}}
+                {{item3}}
               </span>
             </p>
-            <button :data-name="item2.key1" :data-id="item2.id" class="con-con-btn">{{carObj.BottomEntranceTitle}}</button>
+            <button  :data-name="item2.key1" :data-id="item2.id" class="con-con-btn">{{carObj.BottomEntranceTitle}}</button>
           </div>
         </div>
       </div>
@@ -42,31 +42,26 @@ export default {
       // 多个汽车详情数据
       dataObj: state => state.detail.dataObj,
       // 单个汽车详情
-      carObj: state => state.detail.car
+      carObj: state => state.detail.car,
+      
     })
   },
   methods: {
-    // 存储汽车ID
-    saveCarId(id) {
-      console.log(id)
-      this.saveCarId(id)
-    },
     // car Id 
     setCar(e) {
       const { id, name } = e.target.dataset
       this.setCarId(id)
       this.setName(name)
-      this.defaultData(name)
       window.history.back()
     },
     ...mapMutations({
       setCarId: 'img/setCarId',
-      setName: 'img/setName',
-      defaultData: 'detail/defaultData'
+      setName: 'img/setName'
     }),
     // 回退页面
     goBack() {
-      window.history.back()
+      this.$emit('update:showType', false)
+      // window.history.back()
     },
     // tab切换
     tab(i, item) {
@@ -82,7 +77,6 @@ export default {
     // 获取ID
     getId() {
       const { id } = this.$route.query
-      
       // 根据传过来的ID 获取数据
       this.getDetailData(id)
     }

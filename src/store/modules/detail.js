@@ -34,7 +34,10 @@ function sortCarList(list) {
 const state = {
     dataObj: {},
     year: [],
-    car: {}
+    car: {},
+    carInfo: {},
+    defaultName: '',
+    carID: ''
 }
 
 const mutations = {
@@ -48,12 +51,23 @@ const mutations = {
     updateCar(state, payload) {
         // console.log(payload)
         state.car = payload
+    },
+    updateCarInfo(state, payload) {
+        state.carInfo = payload
+    },
+    defaultData(state, payload) {
+        // console.log(payload)
+        state.defaultName = payload
+    },
+    updateCarID(state, payload) {
+        state.carID = payload
     }
 }
 
 const actions = {
     async getDetailData({commit}, payload) {
         const res = await detailData(payload)
+        // console.log(res)
         if (res.code === 1) {
             // 排序
             sortCarList(res.data.list)
@@ -100,6 +114,7 @@ const actions = {
                 }
                 
             })
+            
             // 激活 mutations
             // 多个汽车详情数据
             commit('updateObj', data)
@@ -107,6 +122,19 @@ const actions = {
             commit('updateYear', year)
             // 汽车详情
             commit('updateCar', res.data)
+            // 汽车名称，汽车图片
+            const objCarInfo = {
+                name: res.data.AliasName,
+                pic: res.data.Picture
+            }
+            // 汽车信息
+            commit('updateCarInfo', objCarInfo)
+            // 发送一个默认信息
+            const id = res.data.list[0].car_id
+            commit('updateCarID', id)
+            let defaultInfo = data['全部'][0].list[0].key1
+            // console.log(defaultInfo)
+            commit('defaultData', defaultInfo)
         }
     }
 }
