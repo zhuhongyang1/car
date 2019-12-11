@@ -1,4 +1,4 @@
-import { getImgList } from '@/services'
+import { getImgList, getAllImgList } from '@/services'
 
 const state = {
     list: [],
@@ -6,7 +6,11 @@ const state = {
     CarId: '',
     name: '',
     colorName: '',
-    saveCarId: ''
+    saveCarId: '',
+    allImg: [],
+    page: 0,
+    done: false,
+    index: 0
 }
 
 const mutations = {
@@ -28,6 +32,18 @@ const mutations = {
     saveCarId(state, payload) {
         // console.log(payload)
         state.saveCarId = payload
+    },
+    getAllImgB(state, payload) {
+        state.allImg = payload
+    },
+    setPage(state, payload) {
+        state.page = payload
+    },
+    setDone(state, payload) {
+        state.done = payload
+    },
+    saveIndex(state, payload) {
+        state.index=  payload
     }
 }
 
@@ -45,13 +61,20 @@ const actions = {
         const res = await getImgList(payload) 
         // console.log(res)
         if (res.code === 1) {
-            res.data.forEach(item1 => {
-                item1.List.forEach(item2 => {
-                    item2.Url = item2.Url.replace('{0}', 2)
-                })
-            })
-            // console.log(res.data)
+            console.log(res.data)
             commit('updateList', res.data)
+        }
+    },
+    async getAllImg({ commit, state }, payload) {
+        const res = await getAllImgList(payload)
+        
+        // state.allImg.concat(res.data.List)
+        // state.allImg.push(1)
+        if (res.code === 1) {
+            let arr = state.allImg || []
+            let newArr = arr.concat(res.data.List)
+            commit('setDone', false)
+            commit('getAllImgB', newArr)
         }
     }
 }
