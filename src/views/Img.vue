@@ -1,80 +1,91 @@
 <template>
-  <div class="img-wrap" ref="wrap">
-    <div class="title" ref="title">
-        <p @click="setColor">
-            <span>
-                <em>
-                    {{colorName || '颜色'}}
-                </em>
-            </span>
-        </p>
-        <!-- <p @click="setColor">颜色</p> -->
-        <p @click="setType" >
-            <span>
-                <em>
-                    {{name || '车款'}}
-                </em>
-            </span>
-        </p>
+<div>
+    <div class="img-wrap" ref="wrap" v-if="wrapFlag">
+        <div class="title" ref="title">
+            <p @click="setColor">
+                <span>
+                    <em>
+                        {{colorName || '颜色'}}
+                    </em>
+                </span>
+            </p>
+            <!-- <p @click="setColor">颜色</p> -->
+            <p @click="setType" >
+                <span>
+                    <em>
+                        {{name || '车款'}}
+                    </em>
+                </span>
+            </p>
+        </div>
+        <ul class="img-con" v-show="!colorFlag">
+            <li v-for="(item1, index1) in list" :key="index1" class="img-li">
+                <div class="mark" @click="handlerMark(item1.Id)">
+                    <p>{{item1.Name}}</p>
+                    <p>{{item1.Count}}张></p>
+                </div>
+                <div  v-for="(item2, index2) in item1.List" :key="index2">
+                    <span 
+                    :style="{ 
+                    backgroundImage: 'url(' + item2.Url.replace('{0}', 2) + ')',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    padding: '46%',
+                    display: 'block',
+                    border: '2px solid #fff',
+                    }" />
+                </div>
+            </li>
+            <li class="bottom"></li>
+        </ul>
+        <div v-show="!list.length" class="empty">内容不存在！</div>
+        
+        <!-- 颜色组件 -->
+        <transition name="scroll-top" >
+            <Color v-show="colorFlag" :showColor.sync="colorFlag"/>  
+        </transition>  
+
     </div>
-    <ul class="img-con" v-show="!colorFlag">
-        <li v-for="(item1, index1) in list" :key="index1" class="img-li">
-            <div class="mark">
-                <p>{{item1.Name}}</p>
-                <p>{{item1.Count}}张></p>
-            </div>
-            <div  v-for="(item2, index2) in item1.List" :key="index2">
-                <span 
-                :style="{ 
-                backgroundImage: 'url(' + item2.Url + ')',
-                backgroundRepeat: 'no-repeat',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                padding: '46%',
-                display: 'block',
-                border: '2px solid #fff',
-                }" />
-            </div>
-        </li>
-        <li class="bottom"></li>
-    </ul>
-    <div v-show="!list.length" class="empty">内容不存在！</div>
-    
-    <!-- 颜色组件 -->
-    <transition name="scroll-top" >
-        <Color v-show="colorFlag" :showColor.sync="colorFlag"/>  
-    </transition>  
+    <!-- 上拉加载 下拉刷新组件 -->
+    <imgOne v-if="!wrapFlag" :slideFlag.sync="slideFlag" :imgID="this.imgID" :colorID="this.IDcolor" :pageSize="this.pageSize" /> 
 
+    <!-- 轮播图 组件 -->
+    <SlideShow v-if="slideFlag" :slideFlag.sync="slideFlag"/>
 
-    <!-- 车款
-    <transition name="scroll-top" >
-        <Type v-show="carTypeFlag" :showType.sync="carTypeFlag"/>  
-    </transition>   -->
-
-  </div>
+</div>
 </template>
 
 <script>
 // 引入 颜色 组件
 import Color from '@/components/home/Color/Color'
+// 轮播图组件
+import SlideShow from '@/components/SlideShow'
 
 // 引入 车款 组件
 // import Type from '../components/home/Type/Type'
 
+// 引入 上拉加载 下拉刷新 组件
+import ImgOne from '@/components/ImgOne' 
 import { mapState, mapActions, mapMutations } from 'vuex'
 
 export default {
     beforeDestroy() {
-        console.log(1)
         this.init()
     },
     data() {
         return {
-            colorFlag: false
+            colorFlag: false,
+            wrapFlag: true,
+            pageSize: 30,
+            IDcolor: '',
+            slideFlag: false
         }
     },
     components: {
         Color,
+        ImgOne,
+        SlideShow
         // Type
     },
     computed: {
@@ -86,7 +97,8 @@ export default {
             // carID
             CarId: state => state.img.CarId,
             // colorName
-            colorName: state => state.img.colorName
+            colorName: state => state.img.colorName,
+            page: state => state.img.page
         })
     },
     created() {
@@ -97,6 +109,7 @@ export default {
     },
     watch: {
         ColorID(newQuestion, oldQuestion) {
+            this.IDcolor = newQuestion
             this.getImgList({SerialID: this.id})
         },
         // CarId(newQuestion, oldQuestion) {
@@ -104,6 +117,23 @@ export default {
         // },
     },
     methods: {
+        // 点击阴影层时，请求数据
+        handlerMark(imgID) {
+            const { id } = this.$route.query
+            let num = this.page + 1
+            this.setPage(num)
+            let params = {
+                SerialID: id,
+                ImageID: imgID,
+                Page: num,
+                PageSize: this.pageSize,
+                ColorID: this.IDcolor || ''
+            }
+            this.getAllImg(params)
+            this.imgID = imgID 
+            this.wrapFlag = false
+            
+        },
         // 组件销毁前 初始化数据
         init() {
             this.setColorName('')
@@ -117,6 +147,7 @@ export default {
             setName: 'img/setName',
             setColorID: 'img/setColorID',
             setCarId: 'img/setCarId',
+            setPage: 'img/setPage',
         }),
         // 动画
         animation() {
@@ -141,7 +172,9 @@ export default {
             this.$router.push(`type?id=${this.id}`)
         },
         ...mapActions({
-            getImgList: 'img/getImgList'
+            getImgList: 'img/getImgList',
+            // 获取所有图片
+            getAllImg: 'img/getAllImg'
         }),
         getId() {
             this.id = this.$route.query.id

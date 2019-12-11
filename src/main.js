@@ -5,12 +5,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-
-// 引入vant
-import Vant from 'vant';
-import 'vant/lib/index.css';
-Vue.use(Vant)
-
+ 
 // 引入 lib-flexible 移动端rem适配插件
 import 'lib-flexible/flexible.js'
 
@@ -26,8 +21,11 @@ Vue.use(VueLazyload, {
 // 引入 Vant
 import vant from 'vant';
 import 'vant/lib/index.css';
+// 引入 图片预览功能
+import { ImagePreview } from 'vant';
+Vue.use(vant)
 
-Vue.use(Vant);
+Vue.use(vant);
  
 // // 引入loading
 // import loading from './components/loading/index'
