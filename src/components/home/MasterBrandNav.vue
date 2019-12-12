@@ -23,9 +23,9 @@ export default {
     },
     watch: {
         masterKeys () {
-        this.$nextTick(() => {
-            this.offsetTop = (window.innerHeight - this.$refs.container.offsetHeight) / 2
-        })
+            this.$nextTick(() => {
+                this.offsetTop = (window.innerHeight - this.$refs.container.offsetHeight) / 2
+            })
         }
     },
     methods: {

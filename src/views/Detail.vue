@@ -49,7 +49,8 @@ export default {
     data() {
       return {
         actives: 0,
-        item: '全部'
+        item: '全部',
+        selfCarID: ''
       }
     },
     computed: {
@@ -59,7 +60,11 @@ export default {
         // 多个汽车详情数据
         dataObj: state => state.detail.dataObj,
         // 单个汽车详情
-        carObj: state => state.detail.car
+        carObj: state => state.detail.car,
+        // 获取ID
+        carID: state => state.detail.carID,
+        // 自动选择的城市名称
+        defaultCity: state => state.city.defaultCity,
       })
     },
     created() {
@@ -67,20 +72,34 @@ export default {
       this.getId()
       // console.log(this.$store)
     },
+    watch: {
+      dataObj(now) {
+        if (now['全部']) {
+          this.selfCarID = now['全部'][0].list[0].id
+        }
+      },
+      defaultCity(now) {
+        this.saveCityID(now.CityID)
+      }
+    },  
     methods: {
       // 跳转price
       // 激活 mutations
       ...mapMutations({
         saveCarId: 'img/saveCarId',
         defaultData: 'detail/defaultData',
-        updateCarID: 'dealer/updateCarID'
+        updateCarID: 'dealer/updateCarID',
+        // 保存城市ID
+        saveCityID: 'dealer/updateCityID'
+        
       }),
       // 显示price组件
       goPrice(obj) {
         // 存储ID
         const { key, id } = obj
         key && this.defaultData(key)
-        this.updateCarID(id)
+        let idCar = id || this.selfCarID 
+        this.updateCarID(idCar)
         this.$router.push('price')
       },
       // 跳转img
@@ -96,18 +115,19 @@ export default {
       },
       // 辅助方法
       ...mapActions({
-        getDetailData: 'detail/getDetailData'
+        getDetailData: 'detail/getDetailData',
+        getDefaultCity: 'city/getDefaultCity'
       }),
 
       // 获取ID
       getId() {
         const { id } = this.$route.query
         // 存入ID
-        this.updateCarID(id)
-        // 存入ID
         this.saveCarId(id)
         // 根据传过来的ID 获取数据
         this.getDetailData(id)
+        // 激活默认城市
+        this.getDefaultCity()
       }
     },
     // 如果再DOM 结构中使用了 v-if v-show或者v-for （根据后台数据获取的DOM即响应式） 那么这些DOM是不会在mountedj阶段找到的，只能在updated阶段找到

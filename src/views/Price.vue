@@ -1,5 +1,5 @@
 <template>
-  <div class="wrap">
+  <div class="wrap" >
     <div class="price-wrap" v-show="!cityFlag">
       <header class="header">
         可向多个商家咨询最低价，商家及时回复
@@ -38,9 +38,6 @@
             询最低价
           </button>
         </div>
-
-        <!-- 引入 下面的子组件 -->
-        <QuotationLast />
  
       </div>
 
@@ -53,8 +50,12 @@
     
 
     <!-- 经销商组件 -->
-    <Dealer />
+    <Dealer ref="dealer" />
 
+    <div v-show="footerFlag" class="footer">
+      寻最低价
+    </div>
+    
   </div>
 </template>
 
@@ -77,7 +78,8 @@ export default {
   data() {
     return {
       username: '',
-      phone: ''
+      phone: '',
+      footerFlag: false
     }
   },
   components: {
@@ -99,12 +101,23 @@ export default {
       getCarId: state => state.img.saveCarId
     })
   },
-  watch: {
-    defaultCity(now) {
-      this.saveCityID(now.CityID)
-    }
-  },
+
   methods: {
+    // 滚动
+    scrollFunc() {
+      const dealer = this.$refs.dealer.$refs.dealer
+      const dealerTop = dealer.offsetTop - 62
+      window.addEventListener('scroll', () => {
+        // console.log('----------------', 1111111)
+        let top = window.pageYOffset
+        // console.log(top, dealerTop)
+        if (top >= dealerTop) {
+          this.footerFlag = true
+        } else {
+          this.footerFlag = false
+        }
+      })
+    },
     // btn询问最低价
     badPrice() {
 
@@ -153,9 +166,7 @@ export default {
     }),
     ...mapMutations({
       // 设置主组件的标识
-      setCityFlag: 'city/setCityFlag',
-      // 保存城市ID
-      saveCityID: 'dealer/updateCityID'
+      setCityFlag: 'city/setCityFlag'
     })
   },
   created() {
@@ -163,14 +174,39 @@ export default {
     this.getDefaultCity()
     // 调用获取一级城市列表函数
     this.getCityListOne()
+  },
+  mounted() {
+    this.scrollFunc()
   }
 }
 </script>
 
 <style lang="scss" scoped> 
 
+.footer {
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  background: #3aacff;
+  text-align: center;
+  font-size: 17px;
+  color: #fff;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+}
 
+.wrap {
+  // height: 100%;
+  padding-bottom: 50px;
+  box-sizing: border-box;
+  overflow-y: scroll;
+}
 
+.price-wrap {
+  padding-top: 30px;
+  box-sizing: border-box;
+}
 
 .scroll-top-enter, .scroll-top-leave-to {
   transform: translate3d(0, 100%, 0);
@@ -310,5 +346,8 @@ export default {
   z-index: 99;
   color: #fff;
   font-size: 16px;
+  position: fixed;
+  left: 0;
+  top: 0;
 }
 </style>

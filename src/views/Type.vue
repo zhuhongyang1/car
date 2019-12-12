@@ -121,9 +121,9 @@ export default {
     padding: 0 10px;
     border-bottom: 8px solid #f4f4f4;
     overflow: hidden;
-    font-size: 14px;
+    font-size: 7px;
     p:nth-child(1) {
-      padding: 12px 0;
+      padding: 6px 0;
       color: #3d3d3d;
     }
     p:nth-child(2) {
@@ -132,10 +132,10 @@ export default {
     p:nth-child(3) {
       text-align: right;
       padding-bottom: 8px;
-      font-size: 12px;
+      font-size: 6px;
       color: #818181;
       span:nth-child(2) {
-        font-size: 14px;
+        font-size: 8px;
         color: #ff2336;
         margin-left: 5px;
       }
@@ -146,7 +146,7 @@ export default {
     padding: 0 10px;
     // height: 20px;
     line-height: 25px;
-    font-size: 14px;
+    font-size: 6px;
     color: #999;
     background: #f4f4f4;
     position: relative;
@@ -156,7 +156,7 @@ export default {
 .con-div {
     border-top: 8px solid #f4f4f4;
     padding: 0 18px;
-    font-size: 16px;
+    font-size: 12px;
     height: 40px;
     line-height: 40px;
     background: #fff;

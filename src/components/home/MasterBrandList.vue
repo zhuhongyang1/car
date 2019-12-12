@@ -26,8 +26,11 @@ export default {
   },
   watch: {
     listElement(newQuestion, oldQuestion) {
-      const y = document.querySelector('.' + newQuestion).offsetTop
-      window.scrollTo(0, y)      
+      this.$nextTick(() => {
+        const y = document.querySelector('.' + newQuestion).offsetTop
+        // console.log(y)
+        window.scrollTo(0, y)  
+      })    
     }
   },
   methods: {

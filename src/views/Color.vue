@@ -50,7 +50,7 @@ export default {
     }),
     goBack(e) {
       const { id, name } = e.target.dataset
-      console.log('name', name)
+      // console.log('name', name)
       this.setColorId(id)
       // window.history.back()
     },

@@ -17,21 +17,25 @@ const mutations = {
     },
     // 更新cityID
     updateCityID(state, payload) {
-        if (payload) state.cityID = payload 
+        if (payload) {
+            state.cityID = payload 
+        }
     }
 }
 
 const actions = {
-    async getDealerList({ commit, state }) {
+    async getDealerList({ commit, state }, payload) {
         let params = {}
-        if (state.cityID) {
-            params.cityId = state.cityID
+        if (payload || state.cityID) {
+            params.cityId = payload || state.cityID
         }
         if (state.carID) {
             params.carId = state.carID
         }
         const res = await dealerFunc(params)
-        console.log(res)
+        if (res.code === 1) {
+            commit('updateList', res.data)
+        }
     }
 }
 
