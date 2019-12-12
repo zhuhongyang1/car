@@ -56,7 +56,6 @@ export default {
     mounted() {
         this.$nextTick(() => {
             window.onscroll = () => {
-                let bottomHeight = document.querySelector('.bottom') && document.querySelector('.bottom').offsetHeight
                 let contentHeight = document.querySelector('.content') && document.querySelector('.content').offsetHeight 
                 let nowHeight = document.documentElement.scrollTop + window.innerHeight
                 if (nowHeight >= contentHeight) {

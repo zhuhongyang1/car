@@ -19,14 +19,14 @@ Vue.use(VueLazyload, {
 })
 
 // 引入 Vant
-import vant from 'vant';
+import Vant from 'vant';
 import 'vant/lib/index.css';
+Vue.use(Vant);
+
 // 引入 图片预览功能
 import { ImagePreview } from 'vant';
-Vue.use(vant)
+Vue.use(ImagePreview)
 
-Vue.use(vant);
- 
 // // 引入loading
 // import loading from './components/loading/index'
 // Vue.use(loading)

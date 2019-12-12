@@ -14,7 +14,6 @@ const mutations = {
         state.masterKeys = payload
     },
     scrollToList(state, payload) {
-        // console.log(payload)
         state.listElement = payload
     }
 }

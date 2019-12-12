@@ -52,6 +52,7 @@
 
     <!-- 轮播图 组件 -->
     <SlideShow v-if="slideFlag" :slideFlag.sync="slideFlag"/>
+    
 
 </div>
 </template>
@@ -61,6 +62,7 @@
 import Color from '@/components/home/Color/Color'
 // 轮播图组件
 import SlideShow from '@/components/SlideShow'
+
 
 // 引入 车款 组件
 // import Type from '../components/home/Type/Type'
@@ -112,9 +114,16 @@ export default {
             this.IDcolor = newQuestion
             this.getImgList({SerialID: this.id})
         },
-        // CarId(newQuestion, oldQuestion) {
-        //     this.getImgList({SerialID: this.id})
-        // },
+        // 监听 slideFlag 如果页面打开 ，那么关闭本页面的滚动条
+        slideFlag(now) {
+            if (now) {
+                document.body.style.position='fixed'; 
+                document.body.style.height='100%';
+                document.documentElement.style.overflow='hidden'
+            } else {
+                document.body.style.overflow = '' // 出现滚动条
+            }
+        }
     },
     methods: {
         // 点击阴影层时，请求数据
