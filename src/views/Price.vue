@@ -12,11 +12,9 @@
             <p>{{defaultName}}</p>
           </div>
         </div>
-        
         <div class="self-info">
           <p>个人信息</p>
         </div>
-
         <ul class="con-info-ul">
           <li>
             <span>姓名</span>
@@ -30,26 +28,17 @@
             <span>城市</span>
             <span @click="choiceCity">{{getCityName || defaultCity.CityName}}</span>
           </li>
-          
         </ul>
-
         <div class="quotation">
           <button @click="badPrice">
             询最低价
           </button>
         </div>
- 
       </div>
-
     </div>
-    
-    <!-- 城市列表组件 -->
     <transition name="scroll-top">
       <City  v-show="cityFlag"  />
-    </transition>
-    
-
-    <!-- 经销商组件 -->
+    </transition>    
     <Dealer ref="dealer" />
 
     <div v-show="footerFlag" class="footer">
@@ -63,15 +52,9 @@
 import { mapState, mapMutations, mapActions } from 'vuex'
 import { Dialog } from 'vant';
 
-
-
-// 引入 城市列表组件 
 import City from '@/components/home/City/CityOne.vue'
 
-// 引入 下面的组件
-import QuotationLast from '@/components/home/City/Last'
 
-// 引入 经销商组件
 import Dealer from '@/components/Dealer'
 
 export default {
@@ -84,33 +67,26 @@ export default {
   },
   components: {
     City,
-    QuotationLast,
+   
     Dealer
   },
   computed: {
     ...mapState({
-      // 主组件的标识
       cityFlag: state => state.city.cityFlag,
       carInfoObj: state => state.detail.carInfo,
       defaultName: state => state.detail.defaultName,
-      // 自动选择的城市名称
       defaultCity: state => state.city.defaultCity,
-      // 获取选择的城市名称
       getCityName: state => state.city.cityName,
-      // 获取car ID
       getCarId: state => state.img.saveCarId
     })
   },
 
   methods: {
-    // 滚动
     scrollFunc() {
       const dealer = this.$refs.dealer.$refs.dealer
       const dealerTop = dealer.offsetTop - 62
       window.addEventListener('scroll', () => {
-        // console.log('----------------', 1111111)
         let top = window.pageYOffset
-        // console.log(top, dealerTop)
         if (top >= dealerTop) {
           this.footerFlag = true
         } else {
@@ -118,12 +94,8 @@ export default {
         }
       })
     },
-    // btn询问最低价
     badPrice() {
-
-      // 匹配2-4个中文字符
       const userReg = /^[\u4E00-\u9FA5]{2,4}$/g
-      // 匹配手机号
       const phoneReg = /^1[3456789]\d{9}$/
       let userNameFlag = false
       let phoneFlag = false
@@ -131,27 +103,20 @@ export default {
         if (userReg.test(this.username)) {
           userNameFlag = true
         } else {
-          // 请输入真实姓名
           Dialog({ message: '请输入真实姓名' });
         }
 
         if (phoneReg.test(this.phone)) {
           phoneFlag = true
         } else {
-          // 请输入真实手机号码
           Dialog({ message: '请输入真实手机号码' });
         }
       } else {
-        // 账号或密码不能为空
         Dialog({ message: '账号或密码不能为空' });
       }
-
-      // 姓名和手机号都正确
       if (userNameFlag && phoneFlag) {
-        // 验证成功，to do something
       } 
     },
-    // 跳转Type
     goType() {
       this.$router.push(`type?id=${this.getCarId}`)
     },
@@ -159,20 +124,15 @@ export default {
       this.setCityFlag(true)
     },
     ...mapActions({
-      // 默认城市
       getDefaultCity: 'city/getDefaultCity',
-      // 1级城市列表
       getCityListOne: 'city/getCityListOne',
     }),
     ...mapMutations({
-      // 设置主组件的标识
       setCityFlag: 'city/setCityFlag'
     })
   },
   created() {
-    // 调用默认城市函数
     this.getDefaultCity()
-    // 调用获取一级城市列表函数
     this.getCityListOne()
   },
   mounted() {
@@ -182,7 +142,7 @@ export default {
 </script>
 
 <style lang="scss" scoped> 
-
+body {-webkit-overflow-scrolling: touch; }
 .footer {
   width: 100%;
   height: 50px;
@@ -197,7 +157,6 @@ export default {
 }
 
 .wrap {
-  // height: 100%;
   padding-bottom: 50px;
   box-sizing: border-box;
   overflow-y: scroll;
@@ -215,8 +174,6 @@ export default {
 .scroll-top-enter-active, .scroll-top-leave-active {
   transition: all .1s linear;
 }
-
-
 .city span:nth-child(2):after {
   content: "";
   display: inline-block;
@@ -273,6 +230,8 @@ export default {
         text-align: right;
         box-sizing: border-box;
         color: #555;
+        -webkit-appearance: none;
+        -webkit-tap-highlight-color: rgba(0,0,0,0)
       }
 
     }
@@ -300,7 +259,7 @@ export default {
   box-sizing: border-box;
   p:nth-child(1) {
     font-size: 18px;
-    margin-bottom: 15px;
+    margin-bottom: 6px;
   }
 }
 

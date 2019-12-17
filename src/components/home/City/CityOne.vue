@@ -27,7 +27,6 @@
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
 
-// 引入 二级城市 组件
 import CityTwo from './CityTwo'
 
 export default {
@@ -47,29 +46,19 @@ export default {
     },
     methods: {
         ...mapMutations({
-            // 设置城市名称
             setCityName: 'city/setCityName',
-            // 设置主组件的标识
             setCityFlag: 'city/setCityFlag',
-            // 保存城市id
             saveCityID: 'dealer/updateCityID'
         }),
-        // 获取城市名称
         getCityName(name, id) {
-            // 设置城市名称
             this.setCityName(name)
-            // 关闭主组件
             this.setCityFlag(false)
-            // 保存城市ID
             this.saveCityID(id)
-            // 关闭父组件
-            // this.$emit('update:cityFlag', false)
+            
         },
-        // 点击自动选择的城市时
         closeFather() {
             alert(1)
         },
-        // 关闭二级城市
         closeCityTwo() {
             this.cityFlag = false
         },

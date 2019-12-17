@@ -7,15 +7,12 @@ const state = {
 }
 
 const mutations = {
-    // 更新经销商列表
     updateList(state, payload) {
         state.list = payload
     },
-    // 更新carID
     updateCarID(state, payload) {
         state.carID = payload
     },
-    // 更新cityID
     updateCityID(state, payload) {
         if (payload) {
             state.cityID = payload 

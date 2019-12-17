@@ -2,13 +2,10 @@ import { detailData } from '@/services'
 
 
 
-// 格式化数据
 function formateYear(list) {
     const newList = []
-    // 只添加一次 全部
     let flag = true
     list.forEach(item => {
-        // 判断是否存在，如果存在则添加 全部
         if (item.market_attribute.year) {
             flag && newList.push('全部')
             flag = false 
@@ -18,7 +15,6 @@ function formateYear(list) {
     return newList
 }
 
-// 排序
 function sortCarList(list) {
     list.sort((a, b) => {
         if (a.exhaust === b.exhaust) {
@@ -42,21 +38,18 @@ const state = {
 
 const mutations = {
     updateObj(state, payload) {
-        // console.log(payload)
         state.dataObj = payload
     },
     updateYear(state, payload) {
         state.year = payload
     },
     updateCar(state, payload) {
-        // console.log(payload)
         state.car = payload
     },
     updateCarInfo(state, payload) {
         state.carInfo = payload
     },
     defaultData(state, payload) {
-        // console.log(payload)
         state.defaultName = payload
     },
     updateCarID(state, payload) {
@@ -67,16 +60,11 @@ const mutations = {
 const actions = {
     async getDetailData({commit}, payload) {
         const res = await detailData(payload)
-        // console.log(res)
         if (res.code === 1) {
-            // 排序
             sortCarList(res.data.list)
-            // 抽出年份
             const year = formateYear(res.data.list)
-            // 抽出所有数据
             let data = {}
             res.data.list.forEach(item => {
-                // console.log(item)
                 let key = `${item.exhaust_str}/${item.max_power_str} ${item.inhale_type}`
                 let obj = {
                     key1: `${item.market_attribute.year}款 ${item.car_name}`,
@@ -115,25 +103,17 @@ const actions = {
                 
             })
             
-            // 激活 mutations
-            // 多个汽车详情数据
             commit('updateObj', data)
-            // 年份
             commit('updateYear', year)
-            // 汽车详情
             commit('updateCar', res.data)
-            // 汽车名称，汽车图片
             const objCarInfo = {
                 name: res.data.AliasName,
                 pic: res.data.Picture
             }
-            // 汽车信息
             commit('updateCarInfo', objCarInfo)
-            // 发送一个默认信息
             const id = res.data.list[0].car_id
             commit('updateCarID', id)
             let defaultInfo = data['全部'][0].list[0].key1
-            // console.log(defaultInfo)
             commit('defaultData', defaultInfo)
         }
     }

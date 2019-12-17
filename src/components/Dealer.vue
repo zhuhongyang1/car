@@ -33,37 +33,28 @@ import { mapState, mapActions } from 'vuex'
 export default {
     data() {
         return {
-            // 默认前三个打上勾
             defaultList: [0, 1, 2]
         }
     },
     computed: {
         ...mapState({
-            // 获取城市ID
             cityID: state => state.dealer.cityID,
-            // 获取汽车ID
             carID: state => state.dealer.carID,
-            // 获取 经销商列表
             list: state => state.dealer.list,
-            // 主组件的标识
             cityFlag: state => state.city.cityFlag,
         })
     },
     watch: {
-        // 当城市改变，重新激活 vuex 获取经销商列表
         cityID(now) {
             this.getDealerList(now)
         }
     },
     methods: {
-        // 改变 defaultList
         changeDefaultList(i) {
             let index = this.defaultList.indexOf(i)
             if (index === -1) {
-                // 没找到，则添加
                 this.defaultList.push(i)
             } else {
-                // 找到则删除
                 this.defaultList.splice(index, 1)
             }
         },
@@ -71,7 +62,6 @@ export default {
             getDealerList: 'dealer/getDealerList'
         }),
         dealerList() {
-            // 激活 vuex 获取经销商列表
             this.getDealerList()
         }
     },  

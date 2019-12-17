@@ -23,7 +23,6 @@ const actions = {
         })
         commit('updateObj', res.data)
         commit('updateKey', arr)
-        // console.log(res.data)
     }
 }   
 

@@ -9,7 +9,6 @@
                     </em>
                 </span>
             </p>
-            <!-- <p @click="setColor">颜色</p> -->
             <p @click="setType" >
                 <span>
                     <em>
@@ -40,36 +39,31 @@
             <li class="bottom"></li>
         </ul>
         <div v-show="!list.length" class="empty">内容不存在！</div>
-        
-        <!-- 颜色组件 -->
         <transition name="scroll-top" >
             <Color v-show="colorFlag" :showColor.sync="colorFlag"/>  
         </transition>  
 
     </div>
-    <!-- 上拉加载 下拉刷新组件 -->
     <imgOne v-if="!wrapFlag" :slideFlag.sync="slideFlag" :imgID="this.imgID" :colorID="this.IDcolor" :pageSize="this.pageSize" /> 
-
-    <!-- 轮播图 组件 -->
-    <SlideShow v-if="slideFlag" :slideFlag.sync="slideFlag"/>
-    
+    <van-image-preview
+        v-model="slideShow"
+        :images="imageList"
+        @change="onChange"
+        :startPosition="index"
+        :loop="false"
+    >
+        <template v-slot:index>{{index + 1}}/{{count}}</template>
+    </van-image-preview>
 
 </div>
 </template>
 
 <script>
-// 引入 颜色 组件
 import Color from '@/components/home/Color/Color'
-// 轮播图组件
-import SlideShow from '@/components/SlideShow'
 
-
-// 引入 车款 组件
-// import Type from '../components/home/Type/Type'
-
-// 引入 上拉加载 下拉刷新 组件
 import ImgOne from '@/components/ImgOne' 
 import { mapState, mapActions, mapMutations } from 'vuex'
+
 
 export default {
     beforeDestroy() {
@@ -81,28 +75,44 @@ export default {
             wrapFlag: true,
             pageSize: 30,
             IDcolor: '',
-            slideFlag: false
+            slideFlag: false,
         }
     },
     components: {
         Color,
-        ImgOne,
-        SlideShow
-        // Type
+        ImgOne,  
     },
     computed: {
+        slideShow: {
+            get: function () {
+                return this.show
+            },
+            set: function (newValue) {
+                this.changeShow(newValue)
+            }
+        },
+        imageList() {
+            return this.listImg.map(item => {
+                return item.Url.replace('{0}', item.HighSize)
+            })
+        },
         ...mapState({
+         
+            listImg: state => state.img.allImg,
+            page: state => state.img.page,
+            done: state => state.img.done,
+            show: state => state.sideShow.show,
             list: state => state.img.list,
             name: state => state.img.name,
-            // colorID
             ColorID: state => state.img.ColorID,
-            // carID
             CarId: state => state.img.CarId,
-            // colorName
             colorName: state => state.img.colorName,
-            page: state => state.img.page
+            page: state => state.img.page,
+            count: state => state.img.count,
+            index: state => state.sideShow.index,
+            imgLen: state => state.img.arrLen
         })
-    },
+    }, 
     created() {
         this.getId()
     },
@@ -114,19 +124,8 @@ export default {
             this.IDcolor = newQuestion
             this.getImgList({SerialID: this.id})
         },
-        // 监听 slideFlag 如果页面打开 ，那么关闭本页面的滚动条
-        slideFlag(now) {
-            if (now) {
-                document.body.style.position='fixed'; 
-                document.body.style.height='100%';
-                document.documentElement.style.overflow='hidden'
-            } else {
-                document.body.style.overflow = '' // 出现滚动条
-            }
-        }
     },
     methods: {
-        // 点击阴影层时，请求数据
         handlerMark(imgID) {
             const { id } = this.$route.query
             let num = this.page + 1
@@ -143,22 +142,21 @@ export default {
             this.wrapFlag = false
             
         },
-        // 组件销毁前 初始化数据
         init() {
             this.setColorName('')
             this.setName('')
             this.setColorID('')
             this.setCarId('')
         },
-        // 设置数据
         ...mapMutations({
             setColorName: 'img/setColorName',
             setName: 'img/setName',
             setColorID: 'img/setColorID',
             setCarId: 'img/setCarId',
             setPage: 'img/setPage',
+            changeShow: 'sideShow/changeShow',
+            setIndex: 'sideShow/setIndex'
         }),
-        // 动画
         animation() {
             const wrap = this.$refs.wrap 
             const title = this.$refs.title 
@@ -173,16 +171,34 @@ export default {
                 title.style.left = time + '%'
             }, 10)
         },
+        onChange(index) {
+            this.setIndex(index)
+            const { id } = this.$route.query
+            let page = this.page + 1
+            let maxNum = Math.ceil(this.count / 30)
+
+            if (page > maxNum) return
+
+            if (index >= (this.imgLen - 3)) {
+                this.setPage(page)
+                let params = {
+                    SerialID: id,
+                    ImageID: this.imgID,
+                    Page: page,
+                    PageSize: this.pageSize || 30,
+                    ColorID: this.ColorID || ''
+                }
+                this.getAllImg(params)
+            }
+        },
         setColor() {
             this.colorFlag = true
-            // this.$router.push(`color?id=${this.id}`)
         },
         setType() {
             this.$router.push(`type?id=${this.id}`)
         },
         ...mapActions({
             getImgList: 'img/getImgList',
-            // 获取所有图片
             getAllImg: 'img/getAllImg'
         }),
         getId() {
@@ -194,6 +210,20 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
+
+
+/deep/ .van-image-preview__index {
+    position: absolute;
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    left: 50%;
+    top: 68%;
+    display: flex;
+    justify-content: center;
+    font-size: 14px;
+}
 
 .scroll-top-enter, .scroll-top-leave-to {
     transform: translate3d(0, 100%, 0)
@@ -260,7 +290,6 @@ export default {
     display: flex;
     align-items: center;
     background: #fff;
-    // box-sizing: border-box;
     z-index: 99;
     position: fixed;
     top: 0;
@@ -282,7 +311,6 @@ export default {
 
         &:after {
             content: "";
-            // display: inline-block;
             padding-top: 6px;
             padding-right: 6px;
             border-top: 2px solid #ccc;
@@ -313,14 +341,12 @@ export default {
     margin-bottom: 6px;
     div{
         width: 33.333333333333333333%;
-        // padding:33% 0 0;
     }
 }
 
 .img-wrap {
     margin-left: 100%;
-    // position: absolute;
-    // top: 0;
+    
 }
 
 .img-wrap, .img-con {

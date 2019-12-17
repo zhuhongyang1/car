@@ -44,12 +44,9 @@ export default {
         touchMove(e) {
             this.touchInit(e)
 
-            // 阻止默认事件 - 》页面滚动
             e.preventDefault()
-            // console.log('touchMove---', e)
         },
         touchEnd(e) {
-            // console.log('touchEnd---', e)
         }
     }
 }

@@ -21,9 +21,7 @@ const mutations = {
 const actions = {
     async getMasterBrandList({ commit }, payload) {
         let res = await getMasterBrandList()
-        // console.log('res...', res.data)
         if (res.code === 1) {
-            // 处理数据
             const obj = {}
             res.data.forEach(item => {
                 if (!obj[item.Spelling.slice(0, 1)]) {

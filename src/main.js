@@ -6,10 +6,8 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
  
-// 引入 lib-flexible 移动端rem适配插件
 import 'lib-flexible/flexible.js'
-
-// 图片懒加载
+import './directives'
 import VueLazyload from 'vue-lazyload'
 Vue.use(VueLazyload, {
   preLoad: 1.3,
@@ -18,22 +16,10 @@ Vue.use(VueLazyload, {
   attempt: 1
 })
 
-// 引入 Vant
-import Vant from 'vant';
-import 'vant/lib/index.css';
-Vue.use(Vant);
-
-// 引入 图片预览功能
 import { ImagePreview } from 'vant';
 Vue.use(ImagePreview)
 
-// // 引入loading
-// import loading from './components/loading/index'
-// Vue.use(loading)
-
 Vue.config.productionTip = false
-
-
 
 new Vue({
   router,

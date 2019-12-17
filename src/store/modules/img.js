@@ -1,4 +1,5 @@
 import { getImgList, getAllImgList } from '@/services'
+import store from '@/store'
 
 const state = {
     list: [],
@@ -10,7 +11,10 @@ const state = {
     allImg: [],
     page: 0,
     done: false,
-    index: 0
+    index: 0,
+    count: 0,
+    arrLen: 0,
+    scroll: {}
 }
 
 const mutations = {
@@ -30,7 +34,6 @@ const mutations = {
         state.colorName = payload
     },
     saveCarId(state, payload) {
-        // console.log(payload)
         state.saveCarId = payload
     },
     getAllImgB(state, payload) {
@@ -44,37 +47,55 @@ const mutations = {
     },
     saveIndex(state, payload) {
         state.index=  payload
+    },
+    setImageCount(state, payload) {
+        state.count = payload
+    },
+    setImgLength(state, payload) {
+        state.arrLen = payload
+    },
+    saveScroll(state, payload) {
+        state.scroll = payload
     }
+
 }
 
 const actions = {
     async getImgList({commit, state}, payload) {
-        // 判断是否存在 颜色ID
         if (state.ColorID) {
             payload.ColorID = state.ColorID
         }
-        // 判断是否存在 车Id
         if (state.CarId) {
             payload.CarId = state.CarId
         }
 
         const res = await getImgList(payload) 
-        // console.log(res)
         if (res.code === 1) {
-            console.log(res.data)
             commit('updateList', res.data)
         }
     },
     async getAllImg({ commit, state }, payload) {
+        console.log(payload)
         const res = await getAllImgList(payload)
-        
-        // state.allImg.concat(res.data.List)
-        // state.allImg.push(1)
+        console.log(res.data)
         if (res.code === 1) {
+           
+            if (Object.keys(state.scroll).length) {
+                store.commit('showLoding2', false)
+                state.scroll.refresh()
+                state.scroll.finishPullUp()
+            }
+            
             let arr = state.allImg || []
+
             let newArr = arr.concat(res.data.List)
+            console.log(newArr.length)
+            console.log(res.data.Count)
+            commit('setImgLength', newArr.length)
             commit('setDone', false)
+            console.log(newArr)
             commit('getAllImgB', newArr)
+            commit('setImageCount', res.data.Count)
         }
     }
 }

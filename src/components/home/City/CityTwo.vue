@@ -20,24 +20,16 @@ export default {
     },
     methods: {
         ...mapMutations({
-            // 设置城市名称
             setCityName: 'city/setCityName',
-            // 设置主组件的标识
             setCityFlag: 'city/setCityFlag',
-            // 保存城市id
             saveCityID: 'dealer/updateCityID'
         }),
-        // 获取城市名称
         getCityName(e) {
             const { name, city } = e.target.dataset
-            // 保存城市ID
-            // console.log(city)
+           
             this.saveCityID(city)
-            // 设置城市名称
             this.setCityName(name)
-            // 关闭主组件
             this.setCityFlag(false)
-            // 关闭父组件
             this.$emit('update:cityFlag', false)
         }
     },

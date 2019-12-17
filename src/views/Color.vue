@@ -44,26 +44,20 @@ export default {
     this.getId() 
   },
   methods: {
-    // 往vuex里面存储colorId
     ...mapMutations({
       setColorId: 'img/setColorID'
     }),
     goBack(e) {
       const { id, name } = e.target.dataset
-      // console.log('name', name)
       this.setColorId(id)
-      // window.history.back()
     },
-    // 改变index
     changeIndex(i, key) {
       this.actives = i
       this.key = key
     },
-    // 根据id获取颜色数据
     ...mapActions({
       getColorList: 'color/getColorList'
     }),
-    // 获取ID
     getId() {
       const { id } = this.$route.query 
       this.getColorList(id)
