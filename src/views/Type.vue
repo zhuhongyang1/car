@@ -25,7 +25,6 @@
 </template>
 
 <script>
-// 引入 vuex 的辅助方法
 import { mapState, mapActions, mapMutations } from 'vuex'
 
 export default {
@@ -37,21 +36,16 @@ export default {
   },
   computed: {
     ...mapState({
-      // 年份
       yearList: state => state.detail.year,
-      // 多个汽车详情数据
       dataObj: state => state.detail.dataObj,
-      // 单个汽车详情
       carObj: state => state.detail.car
     })
   },
   methods: {
-    // 存储汽车ID
     saveCarId(id) {
       console.log(id)
       this.saveCarId(id)
     },
-    // car Id 
     setCar(e) {
       const { id, name } = e.target.dataset
       this.setCarId(id)
@@ -64,26 +58,19 @@ export default {
       setName: 'img/setName',
       defaultData: 'detail/defaultData'
     }),
-    // 回退页面
     goBack() {
       window.history.back()
     },
-    // tab切换
     tab(i, item) {
       this.actives = i
       this.item = item
-    // console.log(this.dataObj[item])
     },
-    // 辅助方法
     ...mapActions({
       getDetailData: 'detail/getDetailData'
     }),
 
-    // 获取ID
     getId() {
       const { id } = this.$route.query
-      
-      // 根据传过来的ID 获取数据
       this.getDetailData(id)
     }
   },
@@ -101,10 +88,8 @@ export default {
   }
 }
 </script>
-
 <style lang="scss" scoped>
  
-
 .con-con-btn {
     border: none;
     border-top: 1px solid#eee;
@@ -116,7 +101,6 @@ export default {
     font-weight: 500;
     margin-left: -5%;
 }
-
 .con-con-div {
     padding: 0 10px;
     border-bottom: 8px solid #f4f4f4;
@@ -141,10 +125,8 @@ export default {
       }
     }
 }
-
 .con-key-p {
     padding: 0 10px;
-    // height: 20px;
     line-height: 25px;
     font-size: 6px;
     color: #999;
@@ -152,7 +134,6 @@ export default {
     position: relative;
     top: -5px;
 }
-
 .con-div {
     border-top: 8px solid #f4f4f4;
     padding: 0 18px;
@@ -167,7 +148,6 @@ export default {
       color: #3aacff;
     }
 }
-
  
 .type-title-btn {
   margin-bottom: 8px;

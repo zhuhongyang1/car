@@ -28,7 +28,6 @@ export default {
     listElement(newQuestion, oldQuestion) {
       this.$nextTick(() => {
         const y = document.querySelector('.' + newQuestion).offsetTop
-        // console.log(y)
         window.scrollTo(0, y)  
       })    
     }
@@ -41,12 +40,10 @@ export default {
       getCarSeries: 'carSeries/getCarSeries'
     }),
     carSeries(e) {
+      _hmt.push(['_trackEvent', '首页', '首页', '组件弹框']);
       const id = e.target.dataset.id
-      // vuex -> carSeries 存入点击标识
       this.isShow(true)
-      // 点击的时候激活getCarSeries，根据id 获取车系数据，并存入
       this.getCarSeries(id)
-      
     }
   }
 }

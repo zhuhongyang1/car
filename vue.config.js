@@ -1,4 +1,6 @@
 module.exports = {
+    publicPath: '/1704B/zhuhongyang',
+    productionSourceMap: false,
     css: {
         loaderOptions: {
             postcss: {

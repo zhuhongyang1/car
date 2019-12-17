@@ -22,7 +22,6 @@ import { mapState, mapMutations } from 'vuex'
 export default {
     computed: {
          ...mapState({
-            // 根据id获取车系数据
             list: state => state.carSeries.carSeriesList
         })
     },

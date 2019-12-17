@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Loading v-show="loadingFlag" /> 
+    <Loading class="loadingFirst" v-show="loadingFlag"  /> 
     <router-view/>
   </div>
 </template>
@@ -9,11 +9,6 @@
 import { mapState } from 'vuex'
 import Loading from './components/Loading/Loading'
 export default {
-  // data(){
-  //   return {
-  //     loadingFlag: true
-  //   }
-  // },
   components: {
     Loading
   },
@@ -21,14 +16,14 @@ export default {
     ...mapState(['loadingFlag'])
   }
 }
-
 </script>
 
-<style   >
-
+<style lang="scss" scoped  >
+.loadingFirst {
+  width: 50px;  
+  height: 50px;
+}
 body, html, #app {
   width: 100%;
 }
-
-
 </style>
